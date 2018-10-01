@@ -32,7 +32,7 @@ class PlayerCoinGiveTask extends Task {
         foreach($gameLevel->getPlayers() as $playerInLevel) {
             $blockUnderPlayer = $gameLevel->getBlock($playerInLevel->subtract(0, 0.5));
 
-            if($blockUnderPlayer->getId() === Block::QUARTZ_BLOCK) {
+            if($blockUnderPlayer->getId() === Item::fromString($this->getConfig()->get('moneyblock', Block::QUARTZ_BLOCK))->getId()) {
                 if(count($gameLevel->getPlayers()) < $this->getHotBlock()->getConfig()->get("players", 2)) {
                     $playerInLevel->sendTip(
                         $this->getHotBlock()->getMessage(
