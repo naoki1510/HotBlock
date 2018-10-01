@@ -9,6 +9,7 @@
 namespace surva\hotblock\tasks;
 
 use pocketmine\block\Block;
+use pocketmine\item\Item;
 use pocketmine\scheduler\Task;
 use surva\hotblock\HotBlock;
 
