@@ -9,6 +9,7 @@ use pocketmine\entity\Effect;
 use pocketmine\scheduler\Task;
 use pocketmine\entity\EffectInstance;
 
+// This is the task to check players on block when game ended
 class GameResetTask extends Task {
     /* @var HotBlock */
     private $hotBlock;
