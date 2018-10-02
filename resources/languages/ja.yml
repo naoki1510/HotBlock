@@ -1,0 +1,21 @@
+#  _   _       _   ____  _            _
+# | | | | ___ | |_| __ )| | ___   ___| | __
+# | |_| |/ _ \| __|  _ \| |/ _ \ / __| |/ /
+# |  _  | (_) | |_| |_) | | (_) | (__|   <
+# |_| |_|\___/ \__|____/|_|\___/ \___|_|\_\
+#
+# (C) 2018 by surva network | https://github.com/survanetwork
+
+# English language
+
+# Status messages based on the ground
+ground:
+  safe: "§aここは安全地帯です！"
+  run: "§eGo! Run from other players!"
+  poisoned: "§c毒に侵されてしまいました"
+
+# Messages on the HotBlock
+block:
+  lessplayers: "§6このゲームをプレイするにはあと §f{count} §6人がオンラインになる必要があります。"
+  move: "§eYou're standing on the §l§cHot§6Block§r§e! §bMove!"
+  coins: "§b現在の所持金：§f{count} §bコイン"
