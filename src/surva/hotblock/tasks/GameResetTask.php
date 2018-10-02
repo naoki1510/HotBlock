@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: jarne
- * Date: 01.04.18
- * Time: 21:18
- */
 
 namespace surva\hotblock\tasks;
 
@@ -15,7 +9,7 @@ use pocketmine\entity\Effect;
 use pocketmine\scheduler\Task;
 use pocketmine\entity\EffectInstance;
 
-class PlayerBlockCheckTask extends Task {
+class GameResetTask extends Task {
     /* @var HotBlock */
     private $hotBlock;
 
