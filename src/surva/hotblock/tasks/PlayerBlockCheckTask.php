@@ -41,7 +41,7 @@ class PlayerBlockCheckTask extends Task {
                 case Item::fromString($this->getHotBlock()->getConfig()->get('normalblock', 'END_STONE'))->getId():
                     $playerInLevel->sendTip($this->getHotBlock()->getMessage("ground.run"));
                     break;
-                case Item::fromString($this->getHotBlock()->getConfig()->get('safeblock', ' NETHERRACK'))->getId():
+                case Item::fromString($this->getHotBlock()->getConfig()->get('poisonblock', ' NETHERRACK'))->getId():
                     $playerInLevel->sendTip($this->getHotBlock()->getMessage("ground.poisoned"));
 
                     $effect = Effect::getEffectByName($this->getHotBlock()->getConfig()->get("effecttype", "POISON"));

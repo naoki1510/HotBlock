@@ -59,3 +59,8 @@ effecttype: "POISON"
 
 # How long the effect should take (in seconds)
 effectduration: 3
+
+moneyblock: quartz_block
+safeblock: planks
+normalblock: end_stone
+poisonblock: netherrack
