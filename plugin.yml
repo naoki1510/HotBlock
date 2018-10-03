@@ -12,7 +12,7 @@ description: A funny PvP minigame
 website: https://github.com/survanetwork/HotBlock
 
 commands:
-	pvp:
-		description: command about pvp
-		usage: /pvp
-		permission: true
+  pvp:
+    description: command about pvp
+    usage: /pvp
+    permission: true
