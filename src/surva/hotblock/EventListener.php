@@ -8,8 +8,10 @@
 
 namespace surva\hotblock;
 
+use pocketmine\Player;
 use pocketmine\block\Block;
 use pocketmine\event\entity\EntityDamageEvent;
+use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\Listener;
 
 class EventListener implements Listener {
@@ -33,6 +35,10 @@ class EventListener implements Listener {
                 $event->setCancelled();
             }
         }
+    }
+    
+    public function onPlayerAttack(EntityDamageByEntityEvent $event) {
+    	$damaged = $event->getPlayer();
     }
 
     /**

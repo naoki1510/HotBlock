@@ -20,6 +20,9 @@ class HotBlock extends PluginBase {
 
     /* @var EconomyAPI */
     private $economy;
+    
+    /** @var TeamManager */
+    private $teammanager
 
     public function onEnable() {
         $this->saveDefaultConfig();
@@ -30,6 +33,8 @@ class HotBlock extends PluginBase {
         );
 
         $this->economy = $this->getServer()->getPluginManager()->getPlugin("EconomyAPI");
+        
+        $this->teammanager = new TeamManager($this);
 
         $this->getScheduler()->scheduleRepeatingTask(
             new PlayerBlockCheckTask($this),
@@ -67,6 +72,12 @@ class HotBlock extends PluginBase {
      */
     public function getEconomy(): EconomyAPI {
         return $this->economy;
+    }
+	/**
+     * @return TeamManager
+     */
+    public function getTeamManager(): TeamManager {
+        return $this->teammanager;
     }
 
     /**

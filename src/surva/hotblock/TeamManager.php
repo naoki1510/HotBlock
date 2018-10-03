@@ -9,25 +9,41 @@ use pocketmine\network\mcpe\protocol\RemoveEntityPacket;
 use pocketmine\network\mcpe\protocol\SetEntityDataPacket;
 
 
-class TeamSystem {
+class TeamManager {
 	/** @var HotBlock */
 	private $hotBlock;
 	
-	/** @var Player[] */
-	private $teamData;
+	/** @var Team[] */
+	private $teams
+	private $players;
 
 	public function __construct(HotBlock $hotBlock)
 	{
 		$this->hotBlock = $hotBlock;
+		foreach ($this->hotBlock->getConfig->get('teams', ['red' => 0, 'blue' => 1]) as $name => $color) {
+			if (!is_numeric($color)) {
+				$this->hotBlock->getLogger()->warning('The color of '.$name.' team is invalid.');
+				$color = 0;
+			}
+			$this->teams[$name] = new Team($hotBlock, $name, $color);
+		}
 	}
 	
-	public function add(Player $player) {
-	    $minTeam = 0
-	    foreach ($this->teamData as $team => $players) {
-	        if (count($players[$minteam]) > count($team)) {
-	            
+	public function join(Player $player) : bool{
+	    $minTeams = []
+	    $minPlayers = 0;
+	    foreach ($this->teams as $team) {
+	        if ($minPlayers > $team->getPlayerCount()) {
+	            $minTeams = [$team];
+	            $minPlayers = $team->getPlayerCount();
+	        }elseif ($minPlayers == $team->getPlayerCount()) {
+	        	array_push($minTeams, $team);
 	        }
 	    }
+	    
+	    $addTeam = $minTeams[rand(0, count($minTeams))];
+	    return $addTeam->add($player);
+	    
 	}
 
     // This function is based on Entity::sendData()
@@ -71,4 +87,11 @@ class TeamSystem {
 			
 		}
 	}
+	
+	/**
+     * @return HotBlock
+     */
+    public function getHotBlock(): HotBlock {
+        return $this->hotBlock;
+    }
 }
