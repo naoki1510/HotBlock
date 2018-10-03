@@ -16,6 +16,8 @@ use onebone\economyapi\EconomyAPI;
 use pocketmine\command\CommandSender;
 use surva\hotblock\tasks\PlayerCoinGiveTask;
 use surva\hotblock\tasks\PlayerBlockCheckTask;
+use raklib\protocol\Packet;
+use pocketmine\event\server\DataPacketSendEvent;
 
 class HotBlock extends PluginBase {
     /* @var Config */
@@ -29,6 +31,7 @@ class HotBlock extends PluginBase {
 
     public function onEnable() {
         $this->saveDefaultConfig();
+        $this->teammanager = new TeamManager($this);
         $this->getServer()->getPluginManager()->registerEvents(new EventListener($this), $this);
 
         $this->messages = new Config(
@@ -37,7 +40,6 @@ class HotBlock extends PluginBase {
 
         $this->economy = $this->getServer()->getPluginManager()->getPlugin("EconomyAPI");
         
-        $this->teammanager = new TeamManager($this);
 
         $this->getScheduler()->scheduleRepeatingTask(
             new PlayerBlockCheckTask($this),
@@ -87,6 +89,10 @@ class HotBlock extends PluginBase {
     		break;
     	}
     	return false;
+    }
+
+    public function onPacketSend(DataPacketSendEvent $event){
+        $this->getTeamManager()->onDataPacketSend($event);
     }
 
     /**

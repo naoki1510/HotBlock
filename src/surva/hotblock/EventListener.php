@@ -19,8 +19,12 @@ class EventListener implements Listener {
     /* @var HotBlock */
     private $hotBlock;
 
+    /** @var TeamManager */
+    private $teamManager;
+
     public function __construct(HotBlock $hotBlock) {
         $this->hotBlock = $hotBlock;
+        $this->teamManager = $hotBlock->getTeamManager();
     }
 
     /**
@@ -39,12 +43,26 @@ class EventListener implements Listener {
     }
     
     public function onPlayerAttack(EntityDamageByEntityEvent $event) {
-    	$damaged = $event->getPlayer();
+        $damaged = $event->getEntity();
+        $attacker = $event->getDamager();
+        if($this->getTeamManager()->exists($damaged) && $this->getTeamManager()->exists($attacker)){
+            if($this->getTeamManager()->getTeamOf($damaged)->getName() === $this->getTeamManager()->getTeamOf($attacker)){
+                $event->setCancelled(true);
+            }
+        }
     }
     /*
     public function onJoin(PlayerJoinEvent $event) {
     	
     }*/
+
+    /**
+     * @return TeamManager
+     */
+    public function getTeamManager() : TeamManager
+    {
+        return $this->teammanager;
+    }
 
     /**
      * @return HotBlock

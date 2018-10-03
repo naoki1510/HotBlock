@@ -3,11 +3,12 @@
 namespace surva\hotblock;
 
 use pocketmine\Player;
+use pocketmine\Server;
 use pocketmine\entity\Entity;
+use pocketmine\event\server\DataPacketSendEvent;
 use pocketmine\network\mcpe\protocol\AddPlayerPacket;
 use pocketmine\network\mcpe\protocol\RemoveEntityPacket;
 use pocketmine\network\mcpe\protocol\SetEntityDataPacket;
-use pocketmine\Server;
 
 
 class TeamManager {
@@ -32,7 +33,8 @@ class TeamManager {
 	
 	public function join(Player $player) : bool{
 	    $minTeams = [];
-	    $minPlayers = $this->getHotBlock()->getServer()->getMaxPlayers();
+		$minPlayers = $this->getHotBlock()->getServer()->getMaxPlayers();
+		
 	    foreach ($this->teams as $team) {
 	        if ($minPlayers > $team->getPlayerCount()) {
 	            $minTeams = [$team];
@@ -42,7 +44,6 @@ class TeamManager {
 	        }
 		}
 		
-		//var_dump($minTeams);
 	    $addTeam = $minTeams[rand(0, count($minTeams) - 1)];
 	    $this->players[$player->getName()] = $addTeam;
 	    return $addTeam->add($player);
@@ -52,6 +53,10 @@ class TeamManager {
 	public function leave(Player $player){
 		$this->getTeamOf($player)->remove($player);
 		unset($this->players[$player->getName()]);
+	}
+
+	public function exists(Player $player){
+		return isset($this->players[$player->getName()]);
 	}
 
 	/**
@@ -116,20 +121,29 @@ class TeamManager {
 		//$this->getLogger()->info($e->getPacket()->getName() . ' was Sended to ' . $e->getPlayer()->getName() . '.');
 		if ($e->getPacket()->getName() === 'SetEntityDataPacket' || $e->getPacket()->getName() === 'AddPlayerPacket') {
 			//var_dump($e->getPacket());
-			$player = $e->getPlayer();
-			if ($player->getName() == 'naoki1510') {
-				var_dump($e->getPacket());
-				var_dump($e->getPacket()->metadata);
-				if (isset($e->getPacket()->metadata[4])) {
-					$e->getPacket()->metadata[4][1] = 'a';
-				}
+			$targetplayer = $e->getPlayer();
+			if (isset($e->getPacket()->metadata[4])){
+				$sourceplayer = $this->getHotBlock()->getServer()->getPlayer($e->getPacket()->metadata[4]);
+				if(
+				!empty($sourceplayer)
+					&&
+				!empty($this->getTeamOf($targetplayer))
+					&&
+				!empty($this->getTeamOf($sourceplayer))
+					&&
+				$this->getTeamOf($player)->getName() !== $this->getTeamOf($dataplayer)->getName()) {
+					if (isset($e->getPacket()->metadata[4])) {
+						$e->getPacket()->metadata[4][1] = '';
+					}
 
-				if (isset($e->getPacket()->username)) {
-					$e->getPacket()->username = 'a';
-				}
+					if (isset($e->getPacket()->username)) {
+						$e->getPacket()->username = '';
+					}
 
-				var_dump($e->getPacket()->metadata);
-				//$player->sendDataPacket($e->getPacket());
+					//var_dump($e->getPacket()->metadata);
+					//$player->sendDataPacket($e->getPacket());
+				}
+			
 			}
 		}
 	}

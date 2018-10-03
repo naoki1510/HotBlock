@@ -29,6 +29,7 @@ class Team {
 	public function add(Player $player) : bool {
 		if (!$this->exists($player)) {
 			$this->players[$player->getName()] = $player;
+			$player->setNameTag('§' . $this->color['text'] . $player->getName());
 			$player->sendMessage('You are now belonging to §' . $this->color['text'] . $this->getName() . '§f team.');
 			return true;
 		}
@@ -38,6 +39,7 @@ class Team {
 	public function remove(Player $player) : bool {
 		if ($this->exists($player)) {
 			unset($this->players[$player->getName()]);
+			$player->setNameTag($player->getName());
 			$player->sendMessage('You left §' . $this->color['text'] . $this->getName() . '§f team.');
 			return true;
 		}
