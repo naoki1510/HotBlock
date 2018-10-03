@@ -10,6 +10,7 @@ namespace surva\hotblock;
 
 use pocketmine\Player;
 use pocketmine\block\Block;
+use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\Listener;
@@ -40,6 +41,10 @@ class EventListener implements Listener {
     public function onPlayerAttack(EntityDamageByEntityEvent $event) {
     	$damaged = $event->getPlayer();
     }
+    /*
+    public function onJoin(PlayerJoinEvent $event) {
+    	
+    }*/
 
     /**
      * @return HotBlock

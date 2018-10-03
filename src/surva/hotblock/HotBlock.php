@@ -66,6 +66,20 @@ class HotBlock extends PluginBase {
 
         return $key;
     }
+    
+    public function onCommand(CommandSender $sender, Command $command, string $label, array $args) : bool {
+    	switch ($command->getName()) {
+    		case pvp: 
+    			if ($sender instanceof Player) {
+    				$this->getTeamManager()->join($sender);
+    			}else {
+    				$sender->sendMessage('you can use this in game');
+    			}
+    			return true;
+    		break;
+    	}
+    	return false;
+    }
 
     /**
      * @return EconomyAPI

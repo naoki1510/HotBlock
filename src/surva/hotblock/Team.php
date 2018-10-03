@@ -27,6 +27,7 @@ class Team {
 	public function add(Player $player) : bool {
 		if (!$this->exists($player)) {
 			$this->players[$player->getName()] = $player;
+			$player->sendMessage('You are now belonging to' . $this->getName() . ' team.');
 			return true;
 		}
 		return false;
@@ -35,6 +36,7 @@ class Team {
 	public function remove(Player $player) : bool {
 		if ($this->exists($player)) {
 			unset($this->players[$player->getName()]);
+			$player->sendMessage('You left ' . this->getName() .' team.');
 			return true;
 		}
 		return false;

@@ -41,6 +41,7 @@ class TeamManager {
 	        }
 	    }
 	    
+	    $this->players[$player->getName()] = $addTeam->getName();
 	    $addTeam = $minTeams[rand(0, count($minTeams))];
 	    return $addTeam->add($player);
 	    
