@@ -18,16 +18,18 @@ class Team {
 	/** @var Player[] */
 	private $players;
 	
-	public function __construct(HotBlock $hotBlock, String $name, Int $color) {
+	public function __construct(HotBlock $hotBlock, String $name, Array $color) {
 		$this->hotBlock = $hotBlock;
 		$this->name = $name;
-		$this->color = $color;
+		$this->color['text'] = $color['text'] ?? 'f';
+		$this->color['block'] = $color['block'] ?? '0';
+		$this->players = [];
 	}
 	
 	public function add(Player $player) : bool {
 		if (!$this->exists($player)) {
 			$this->players[$player->getName()] = $player;
-			$player->sendMessage('You are now belonging to' . $this->getName() . ' team.');
+			$player->sendMessage('You are now belonging to §' . $this->color['text'] . $this->getName() . '§f team.');
 			return true;
 		}
 		return false;
@@ -36,7 +38,7 @@ class Team {
 	public function remove(Player $player) : bool {
 		if ($this->exists($player)) {
 			unset($this->players[$player->getName()]);
-			$player->sendMessage('You left ' . this->getName() .' team.');
+			$player->sendMessage('You left §' . $this->color['text'] . $this->getName() . '§f team.');
 			return true;
 		}
 		return false;
@@ -46,7 +48,10 @@ class Team {
 		return isset($this->players[$player->getName()]);
 	}
 	
-	public function getAllPlayers() : Player[] {
+	/**
+	 * @return Player[]
+	 */
+	public function getAllPlayers() : array {
 		return $this->players;
 	}
 	
@@ -58,7 +63,7 @@ class Team {
 		return $this->name;
 	}
 	
-	public function getColor() {
+	public function getColor() : array{
 		return $this->color;
 	}
 	

@@ -7,6 +7,7 @@ use pocketmine\entity\Entity;
 use pocketmine\network\mcpe\protocol\AddPlayerPacket;
 use pocketmine\network\mcpe\protocol\RemoveEntityPacket;
 use pocketmine\network\mcpe\protocol\SetEntityDataPacket;
+use pocketmine\Server;
 
 
 class TeamManager {
@@ -14,24 +15,24 @@ class TeamManager {
 	private $hotBlock;
 	
 	/** @var Team[] */
-	private $teams
+	private $teams;
 	private $players;
 
 	public function __construct(HotBlock $hotBlock)
 	{
 		$this->hotBlock = $hotBlock;
-		foreach ($this->hotBlock->getConfig->get('teams', ['red' => 0, 'blue' => 1]) as $name => $color) {
-			if (!is_numeric($color)) {
+		foreach ($this->hotBlock->getConfig()->get('teams', ['red' => ['block' => 14, 'text' => 'c'], 'blue' => ['block' => 11, 'text' => '9']]) as $name => $color) {
+			if (!is_numeric($color['block'])) {
 				$this->hotBlock->getLogger()->warning('The color of '.$name.' team is invalid.');
-				$color = 0;
+				$color['block'] = 0;
 			}
 			$this->teams[$name] = new Team($hotBlock, $name, $color);
 		}
 	}
 	
 	public function join(Player $player) : bool{
-	    $minTeams = []
-	    $minPlayers = 0;
+	    $minTeams = [];
+	    $minPlayers = $this->getHotBlock()->getServer()->getMaxPlayers();
 	    foreach ($this->teams as $team) {
 	        if ($minPlayers > $team->getPlayerCount()) {
 	            $minTeams = [$team];
@@ -39,12 +40,33 @@ class TeamManager {
 	        }elseif ($minPlayers == $team->getPlayerCount()) {
 	        	array_push($minTeams, $team);
 	        }
-	    }
-	    
-	    $this->players[$player->getName()] = $addTeam->getName();
-	    $addTeam = $minTeams[rand(0, count($minTeams))];
+		}
+		
+		//var_dump($minTeams);
+	    $addTeam = $minTeams[rand(0, count($minTeams) - 1)];
+	    $this->players[$player->getName()] = $addTeam;
 	    return $addTeam->add($player);
 	    
+	}
+
+	public function leave(Player $player){
+		$this->getTeamOf($player)->remove($player);
+		unset($this->players[$player->getName()]);
+	}
+
+	/**
+	 * @return null|Team
+	 */
+	public function getTeamOf(Player $player) {
+		return $this->players[$player->getName()] ?? null;
+	}
+
+	public function setTeamOf(Player $player, String $teamname) : bool{
+		if(isset($this->teams[$teamname])){
+			$this->teams[$teamname]->add($player);
+			return true;
+		}
+		return false;
 	}
 
     // This function is based on Entity::sendData()
@@ -86,6 +108,29 @@ class TeamManager {
 			$p->sendDataPacket(clone $remove);
 			$p->sendDataPacket(clone $add);
 			
+		}
+	}
+
+	public function onDataPacketSend(DataPacketSendEvent $e)
+	{
+		//$this->getLogger()->info($e->getPacket()->getName() . ' was Sended to ' . $e->getPlayer()->getName() . '.');
+		if ($e->getPacket()->getName() === 'SetEntityDataPacket' || $e->getPacket()->getName() === 'AddPlayerPacket') {
+			//var_dump($e->getPacket());
+			$player = $e->getPlayer();
+			if ($player->getName() == 'naoki1510') {
+				var_dump($e->getPacket());
+				var_dump($e->getPacket()->metadata);
+				if (isset($e->getPacket()->metadata[4])) {
+					$e->getPacket()->metadata[4][1] = 'a';
+				}
+
+				if (isset($e->getPacket()->username)) {
+					$e->getPacket()->username = 'a';
+				}
+
+				var_dump($e->getPacket()->metadata);
+				//$player->sendDataPacket($e->getPacket());
+			}
 		}
 	}
 	

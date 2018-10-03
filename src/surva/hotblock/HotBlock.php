@@ -8,11 +8,14 @@
 
 namespace surva\hotblock;
 
-use onebone\economyapi\EconomyAPI;
-use pocketmine\plugin\PluginBase;
+use pocketmine\Player;
 use pocketmine\utils\Config;
-use surva\hotblock\tasks\PlayerBlockCheckTask;
+use pocketmine\command\Command;
+use pocketmine\plugin\PluginBase;
+use onebone\economyapi\EconomyAPI;
+use pocketmine\command\CommandSender;
 use surva\hotblock\tasks\PlayerCoinGiveTask;
+use surva\hotblock\tasks\PlayerBlockCheckTask;
 
 class HotBlock extends PluginBase {
     /* @var Config */
@@ -22,7 +25,7 @@ class HotBlock extends PluginBase {
     private $economy;
     
     /** @var TeamManager */
-    private $teammanager
+    private $teammanager;
 
     public function onEnable() {
         $this->saveDefaultConfig();
@@ -69,9 +72,14 @@ class HotBlock extends PluginBase {
     
     public function onCommand(CommandSender $sender, Command $command, string $label, array $args) : bool {
     	switch ($command->getName()) {
-    		case pvp: 
+    		case 'pvp': 
     			if ($sender instanceof Player) {
-    				$this->getTeamManager()->join($sender);
+                    if(empty($this->getTeamManager()->getTeamOf($sender))){
+                        $this->getTeamManager()->join($sender);
+                    }else{
+                        $this->getTeamManager()->leave($sender);
+                    }
+    				
     			}else {
     				$sender->sendMessage('you can use this in game');
     			}
