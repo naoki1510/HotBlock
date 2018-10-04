@@ -12,6 +12,7 @@ use pocketmine\Player;
 use pocketmine\block\Block;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerJoinEvent;
+use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\server\DataPacketSendEvent;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
@@ -36,7 +37,7 @@ class EventListener implements Listener {
         $world = $entity->getLevel();
         $block = $world->getBlock($entity->floor()->subtract(0, 1));
 
-        if($world->getName() === $this->getHotBlock()->getConfig()->get("world", "world")) {
+        if(in_array($world->getName(), $this->getHotBlock()->getConfig()->get("world", ['pvp']))) {
             if($block->getId() === Block::PLANKS) {
                 $event->setCancelled();
             }
@@ -46,7 +47,7 @@ class EventListener implements Listener {
     public function onPlayerAttack(EntityDamageByEntityEvent $event) {
         $damaged = $event->getEntity();
         $attacker = $event->getDamager();
-        if($this->getTeamManager()->exists($damaged) && $this->getTeamManager()->exists($attacker)){
+        if($damaged instanceof Player && $this->getTeamManager()->exists($damaged) && $this->getTeamManager()->exists($attacker)){
             if($this->getTeamManager()->getTeamOf($damaged) === $this->getTeamManager()->getTeamOf($attacker)){
                 $event->setCancelled(true);
             }
@@ -64,11 +65,9 @@ class EventListener implements Listener {
 				if(
 				!empty($sourceplayer)
 					&&
-				$this->getTeamManager()->exists($targetplayer)
-					&&
 				$this->getTeamManager()->exists($sourceplayer)
 					&&
-				$this->getTeamManager()->getTeamOf($sourceplayer) !== $this->getTeamManager()->getTeamOf($targetplayer)) {
+				!$this->getTeamManager()->getTeamOf($sourceplayer)->exists($targetplayer)) {
 					
 					if (isset($e->getPacket()->metadata[4][1])) {
 						$e->getPacket()->metadata[4][1] = '';
@@ -84,6 +83,13 @@ class EventListener implements Listener {
 			
 			}
 		}
+    }
+
+    public function onQuit(PlayerQuitEvent $event)
+    {
+        if($this->getTeamManager()->exists($event->getPlayer())){
+            $this->getTeamManager()->leave($event->getPlayer());
+        }
     }
 
     /*

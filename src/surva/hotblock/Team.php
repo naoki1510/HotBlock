@@ -14,19 +14,24 @@ class Team {
 	
 	/** @var String */
 	public $name;
-	
-	/** @var Int */
+
+	/** @var array */
 	private $color;
+	
+	/** @var int */
+	public $points;
 	
 	/** @var Player[] */
 	private $players;
 	
 	public function __construct(HotBlock $hotBlock, String $name, Array $color) {
 		$this->hotBlock = $hotBlock;
+		//$this->teamManager = $hotBlock->getTeamManager();
 		$this->name = $name;
 		$this->color['text'] = $color['text'] ?? 'f';
 		$this->color['block'] = $color['block'] ?? '0';
 		$this->players = [];
+		$this->points = 0;
 	}
 	
 	public function add(Player $player) : bool {
@@ -34,6 +39,7 @@ class Team {
 			$this->players[$player->getName()] = $player;
 			$player->setNameTag('§' . $this->color['text'] . $player->getName());
 			$player->sendMessage('You are now belonging to §' . $this->color['text'] . $this->getName() . '§f team.');
+			$player->setAllowMovementCheats(true);
 			return true;
 		}
 		return false;
@@ -51,6 +57,24 @@ class Team {
 	
 	public function exists(Player $player) : bool {
 		return isset($this->players[$player->getName()]);
+	}
+
+	public function addPoint(int $point = 1){
+		$this->points += $point;
+	}
+
+	public function getPoint(){
+		return $this->points;
+	}
+
+	public function setPoint(int $point){
+		$this->points = $point;
+	}
+
+	public function init()
+	{
+		$this->players = [];
+		$this->points = 0;
 	}
 	
 	/**
@@ -81,7 +105,7 @@ class Team {
      * @return TeamManager
      */
     public function getTeamManager() : TeamManager{
-        return $this->teamManager;
+        return $this->teamManager ?? ($this->teamManager = $this->getHotBlock()->getTeamManager());
     }
 
     /**

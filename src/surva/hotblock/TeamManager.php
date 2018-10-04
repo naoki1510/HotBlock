@@ -48,9 +48,7 @@ class TeamManager {
 	    
 		foreach ($this->players as $playername => $team) {
 			$target = $this->getHotBlock()->getServer()->getPlayer($playername);
-			if (!empty($target) 
-			&& $this->exists($target) 
-			&& $this->getTeamOf($target) !== $addTeam) {
+			if (!empty($target) && !$addTeam->exists($target)) {
 				$this->sendNameTag($player, $target, '');
 		        
 		    }
@@ -65,10 +63,18 @@ class TeamManager {
 	public function leave(Player $player){
 		$this->getTeamOf($player)->remove($player);
 		unset($this->players[$player->getName()]);
+		$player->teleport($this->getHotBlock()->getServer()->getDefaultLevel()->getSpawnLocation());
 	}
 
 	public function exists(Player $player){
 		return isset($this->players[$player->getName()]);
+	}
+
+	public function init(){
+		foreach ($this->teams as $team) {
+			$team->init();
+		}
+		$this->players = [];
 	}
 
 	/**
@@ -84,6 +90,27 @@ class TeamManager {
 			return true;
 		}
 		return false;
+	}
+
+	/** 
+	 * @return Player[]
+	 */
+	public function getAllPlayers(){
+		$players = [];
+		//var_dump($this->players);
+		foreach ($this->players as $playername => $team) {
+			array_push($players, $this->getHotBlock()->getServer()->getPlayer($playername));
+			//print_r([$playername, $team->getName()]);
+		}
+		//var_dump($players);
+		return $players;
+	}
+
+	/**
+	 * @return Team[]
+	 */
+	public function getAllTeam(){
+		return $this->teams;
 	}
 
     // This function is based on Entity::sendData()

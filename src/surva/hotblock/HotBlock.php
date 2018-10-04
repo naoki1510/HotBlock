@@ -18,20 +18,21 @@ use surva\hotblock\tasks\PlayerCoinGiveTask;
 use surva\hotblock\tasks\PlayerBlockCheckTask;
 use raklib\protocol\Packet;
 use pocketmine\event\server\DataPacketSendEvent;
+use surva\hotblock\tasks\GameResetTask;
 
 class HotBlock extends PluginBase {
-    /* @var Config */
+    /** @var Config */
     private $messages;
 
-    /* @var EconomyAPI */
+    /** @var EconomyAPI */
     private $economy;
     
     /** @var TeamManager */
     private $teamManager;
 
     public function onEnable() {
-        $this->saveDefaultConfig();
         $this->teamManager = new TeamManager($this);
+        $this->saveDefaultConfig();
         $this->getServer()->getPluginManager()->registerEvents(new EventListener($this), $this);
 
         $this->messages = new Config(
@@ -48,6 +49,10 @@ class HotBlock extends PluginBase {
         $this->getScheduler()->scheduleRepeatingTask(
             new PlayerCoinGiveTask($this),
             $this->getConfig()->get("coinspeed", 0.25) * 20
+        );
+        $this->getScheduler()->scheduleRepeatingTask(
+            new GameResetTask($this),
+            $this->getConfig()->get("gameduration", 0.25) * 20
         );
     }
 

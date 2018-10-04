@@ -7,6 +7,7 @@ use pocketmine\block\Block;
 use surva\hotblock\HotBlock;
 use pocketmine\entity\Effect;
 use pocketmine\scheduler\Task;
+use surva\hotblock\TeamManager;
 use pocketmine\entity\EffectInstance;
 
 // This is the task to check players on block when game ended
@@ -19,36 +20,38 @@ class GameResetTask extends Task {
 
     public function __construct(HotBlock $hotBlock) {
         $this->hotBlock = $hotBlock;
+        $this->teamManager = $hotBlock->getTeamManager();
     }
 
-    public function onRun(int $currentTick) {
-        //ワールドがないとき
-        if(!($gameLevel = $this->getHotBlock()->getServer()->getLevelByName(
-            $this->getHotBlock()->getConfig()->get("world", "world")
-        ))) {
-            return;
-        }
+    public function onRun(int $currentTick)
+    {
+        //foreach ($this->getHotBlock()->getConfig()->get("world", ['pvp']) as $levelname) {
+            //if (!($gameLevel = $this->getHotBlock()->getServer()->getLevelByName($levelname))) {
+            //    return;
+            //}
 
-        foreach($gameLevel->getPlayers() as $playerInLevel) {
-            $blockUnderPlayer = $gameLevel->getBlock($playerInLevel->subtract(0, 0.5));
-
-            switch($blockUnderPlayer->getId()) {
-                case Item::fromString($this->getHotBlock()->getConfig()->get('safeblock', 'PLANKS'))->getId():
-                    $playerInLevel->sendTip($this->getHotBlock()->getMessage("ground.safe"));
-                    break;
-                case Item::fromString($this->getHotBlock()->getConfig()->get('normalblock', 'END_STONE'))->getId():
-                    $playerInLevel->sendTip($this->getHotBlock()->getMessage("ground.run"));
-                    break;
-                case Item::fromString($this->getHotBlock()->getConfig()->get('safeblock', ' NETHERRACK'))->getId():
-                    $playerInLevel->sendTip($this->getHotBlock()->getMessage("ground.poisoned"));
-
-                    $effect = Effect::getEffectByName($this->getHotBlock()->getConfig()->get("effecttype", "POISON"));
-                    $duration = $this->getHotBlock()->getConfig()->get("effectduration", 3) * 20;
-
-                    $playerInLevel->addEffect(new EffectInstance($effect, $duration));
-                    break;
+            $points = [];
+            $oneteam = true;
+            foreach ($this->getTeamManager()->getAllTeam() as $team) {
+                if(empty($points[$team->getPoint()])){
+                    $points[$team->getPoint()] = $team;
+                }else{
+                    $oneteam = false;
+                }
             }
-        }
+
+            krsort($points);
+            $winner = array_shift($points);
+
+            if($oneteam){
+                foreach ($this->getTeamManager()->getAllPlayers() as $player) {
+                    $player->sendMessage('You win!!');
+                    $this->getHotBlock()->getEconomy()->addMoney($player, $this->getHotBlock()->getConfig()->get('winmoney', 1000), false, "HotBlock");
+                }
+            }
+        //}
+
+        $this->getTeamManager()->init();
     }
 
     /**

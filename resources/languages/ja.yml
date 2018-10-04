@@ -18,4 +18,4 @@ ground:
 block:
   lessplayers: "§6このゲームをプレイするにはあと §f{count} §6人がオンラインになる必要があります。"
   move: "§eYou're standing on the §l§cHot§6Block§r§e! §bMove!"
-  coins: "§b現在の所持金：§f{count} §bコイン"
+  coins: "§b現在の所持金：$§f{count} §b"

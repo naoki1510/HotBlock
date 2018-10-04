@@ -11,9 +11,18 @@
 language: "en"
 
 # Name of the world where the game is in
-world: "world"
+# Use Regular Expression
+world: 
+- pvp
 
-moneyblock: 'quartz block'
+# Options of block
+# to get money on
+areablock: 'wool'
+# no damage area
+safeblock: 'stained_glass'
+
+gameduration: 180
+
 # How many players must be online that the block is active (prevent that one player is getting coins alone)
 players: 3
 
@@ -21,7 +30,9 @@ players: 3
 checkspeed: 0.25
 
 # The interval in which coins should be given to the player(s) standing on the HotBlock (in seconds)
-coinspeed: 0.25
+coinspeed: 1
+# The point the team can get every $checkspeed seconds
+point: 1
 
 # Only give coins when a player is alone on the HotBlock
 onlyplayer: false
@@ -59,8 +70,3 @@ effecttype: "POISON"
 
 # How long the effect should take (in seconds)
 effectduration: 3
-
-moneyblock: 'quartz_block'
-safeblock: 'planks'
-normalblock: 'end_stone'
-poisonblock: 'netherrack'
