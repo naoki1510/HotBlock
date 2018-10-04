@@ -33,8 +33,7 @@ class TeamManager {
 	
 	public function join(Player $player) : bool{
 	    $minTeams = [];
-		$minPlayers = $this->getHotBlock()->getServer()->getMaxPlayers();
-		
+	    $minPlayers = $this->getHotBlock()->getServer()->getMaxPlayers();
 	    foreach ($this->teams as $team) {
 	        if ($minPlayers > $team->getPlayerCount()) {
 	            $minTeams = [$team];
@@ -44,8 +43,17 @@ class TeamManager {
 	        }
 		}
 		
+		//var_dump($minTeams);
 	    $addTeam = $minTeams[rand(0, count($minTeams) - 1)];
 	    $this->players[$player->getName()] = $addTeam;
+	    
+		$enemy = [];
+		foreach ($this->players as $playername => $team) {
+		    if (!empty($this->getHotBlock()->getServer()->getPlayer($playername)) && $this->getTeamOf()) {
+		        
+		    }
+		}
+		
 	    return $addTeam->add($player);
 	    
 	}
