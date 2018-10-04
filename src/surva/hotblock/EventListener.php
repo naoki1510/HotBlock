@@ -55,7 +55,35 @@ class EventListener implements Listener {
 
     public function onPacketSend(DataPacketSendEvent $e)
     {
-        $this->getTeamManager()->onDataPacketSend($e);
+        //$this->getTeamManager()->onDataPacketSend($e);
+        if ($e->getPacket()->getName() === 'SetEntityDataPacket' || $e->getPacket()->getName() === 'AddPlayerPacket') {
+			$targetplayer = $e->getPlayer();
+			if (isset($e->getPacket()->metadata[4][1]) && isset($e->getPacket()->entityRuntimeId)){
+				$sourceplayer = $this->getHotBlock()->getServer()->findEntity($e->getPacket()->entityRuntimeId);
+				
+				if(
+				!empty($sourceplayer)
+					&&
+				$this->getTeamManager()->exists($targetplayer)
+					&&
+				$this->getTeamManager()->exists($sourceplayer)
+					&&
+				$this->getTeamManager()->getTeamOf($sourceplayer) !== $this->getTeamManager()->getTeamOf($targetplayer)) {
+					
+					if (isset($e->getPacket()->metadata[4][1])) {
+						$e->getPacket()->metadata[4][1] = '';
+					}
+
+					if (isset($e->getPacket()->username)) {
+						$e->getPacket()->username = '';
+					}
+					
+					//var_dump($e->getPacket());
+					//$player->sendDataPacket($e->getPacket());
+				}
+			
+			}
+		}
     }
 
     /*

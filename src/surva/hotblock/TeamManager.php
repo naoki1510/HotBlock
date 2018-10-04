@@ -43,12 +43,9 @@ class TeamManager {
 	        }
 		}
 		
-		//var_dump($minTeams);
 	    $addTeam = $minTeams[rand(0, count($minTeams) - 1)];
 	    $this->players[$player->getName()] = $addTeam;
-	    /*
-		$enemy = [];
-		*/
+	    
 		foreach ($this->players as $playername => $team) {
 			$target = $this->getHotBlock()->getServer()->getPlayer($playername);
 			if (!empty($target) 
@@ -129,40 +126,6 @@ class TeamManager {
 			$p->sendDataPacket(clone $remove);
 			$p->sendDataPacket(clone $add);
 			
-		}
-	}
-
-	public function onDataPacketSend(DataPacketSendEvent $e)
-	{
-		//$this->gethotBlock()->getLogger()->info($e->getPacket()->getName() . ' was Sended to ' . $e->getPlayer()->getName() . '.');
-		if ($e->getPacket()->getName() === 'SetEntityDataPacket' || $e->getPacket()->getName() === 'AddPlayerPacket') {
-			//var_dump($e->getPacket());
-			$targetplayer = $e->getPlayer();
-			if (isset($e->getPacket()->metadata[4][1]) && isset($e->getPacket()->entityRuntimeId)){
-				$sourceplayer = $this->getHotBlock()->getServer()->findEntity($e->getPacket()->entityRuntimeId);
-				
-				if(
-				!empty($sourceplayer)
-					&&
-				!empty($this->getTeamOf($targetplayer))
-					&&
-				!empty($this->getTeamOf($sourceplayer))
-					&&
-				$this->getTeamOf($sourceplayer)->getName() !== $this->getTeamOf($targetplayer)->getName()) {
-					
-					if (isset($e->getPacket()->metadata[4][1])) {
-						$e->getPacket()->metadata[4][1] = '';
-					}
-
-					if (isset($e->getPacket()->username)) {
-						$e->getPacket()->username = '';
-					}
-					
-					//var_dump($e->getPacket());
-					//$player->sendDataPacket($e->getPacket());
-				}
-			
-			}
 		}
 	}
 	
