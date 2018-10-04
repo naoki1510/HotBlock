@@ -96,7 +96,7 @@ class PlayerCoinGiveTask extends Task {
                     $player->addTitle('§6' . $count, '', 2, 16, 2);
                 }
 
-                $player->addActionBarMessage("メッセージ");
+                //$player->addActionBarMessage("メッセージ");
             }
         }
     }

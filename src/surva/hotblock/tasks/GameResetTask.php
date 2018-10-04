@@ -12,7 +12,7 @@ use pocketmine\entity\EffectInstance;
 
 // This is the task to check players on block when game ended
 class GameResetTask extends Task {
-    /* @var HotBlock */
+    /** @var HotBlock */
     private $hotBlock;
 
     /** @var TeamManager */
@@ -25,31 +25,29 @@ class GameResetTask extends Task {
 
     public function onRun(int $currentTick)
     {
-        //foreach ($this->getHotBlock()->getConfig()->get("world", ['pvp']) as $levelname) {
-            //if (!($gameLevel = $this->getHotBlock()->getServer()->getLevelByName($levelname))) {
-            //    return;
-            //}
-
-            $points = [];
-            $oneteam = true;
-            foreach ($this->getTeamManager()->getAllTeam() as $team) {
-                if(empty($points[$team->getPoint()])){
-                    $points[$team->getPoint()] = $team;
-                }else{
-                    $oneteam = false;
-                }
+        $points = [];
+        $oneteam = true;
+        foreach ($this->getTeamManager()->getAllTeam() as $team) {
+            if(empty($points[$team->getPoint()])){
+                $points[$team->getPoint()] = $team;
+            }else{
+                $oneteam = false;
             }
+        }
 
-            krsort($points);
-            $winner = array_shift($points);
+        krsort($points);
+        $winteam = array_shift($points);
 
-            if($oneteam){
-                foreach ($this->getTeamManager()->getAllPlayers() as $player) {
+        if($oneteam){
+            foreach ($this->getTeamManager()->getAllPlayers() as $player) {
+                if ($winteam->exists($player)) {
                     $player->sendMessage('You win!!');
                     $this->getHotBlock()->getEconomy()->addMoney($player, $this->getHotBlock()->getConfig()->get('winmoney', 1000), false, "HotBlock");
+    
                 }
             }
-        //}
+        }
+    
 
         $this->getTeamManager()->init();
     }
