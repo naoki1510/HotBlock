@@ -31,7 +31,7 @@ class PlayerCoinGiveTask extends Task {
             return;
         }
 
-        $teamsOnBlock = 0;
+        $playersOnBlock = 0;
 
         foreach($gameLevel->getPlayers() as $playerInLevel) {
             $blockUnderPlayer = $gameLevel->getBlock($playerInLevel->subtract(0, 0.5));
@@ -45,7 +45,7 @@ class PlayerCoinGiveTask extends Task {
                         )
                     );
                     return;
-                } /*else {
+                } else {
                     if($this->getHotBlock()->getConfig()->get("onlyplayer", false) === true) {
                         $playersOnBlock++;
 
@@ -63,10 +63,6 @@ class PlayerCoinGiveTask extends Task {
 
                         $this->getHotBlock()->getEconomy()->addMoney($playerInLevel, 1, false, "HotBlock");
                     }
-                }*/
-                
-                if (isset($occupy)) {
-                    
                 }
             }
         }

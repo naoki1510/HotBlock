@@ -134,7 +134,7 @@ class TeamManager {
 
 	public function onDataPacketSend(DataPacketSendEvent $e)
 	{
-		$this->gethotBlock()->getLogger()->info($e->getPacket()->getName() . ' was Sended to ' . $e->getPlayer()->getName() . '.');
+		//$this->gethotBlock()->getLogger()->info($e->getPacket()->getName() . ' was Sended to ' . $e->getPlayer()->getName() . '.');
 		if ($e->getPacket()->getName() === 'SetEntityDataPacket' || $e->getPacket()->getName() === 'AddPlayerPacket') {
 			//var_dump($e->getPacket());
 			$targetplayer = $e->getPlayer();
