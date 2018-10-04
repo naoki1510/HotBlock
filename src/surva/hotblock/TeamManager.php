@@ -49,10 +49,15 @@ class TeamManager {
 	    
 		$enemy = [];
 		foreach ($this->players as $playername => $team) {
-		    if (!empty($this->getHotBlock()->getServer()->getPlayer($playername)) && $this->getTeamOf()) {
-		        
+			$target = $this->getHotBlock()->getServer()->getPlayer($playername);
+			if (!empty($target) 
+			&& $this->exists($target) 
+			&& $this->getTeamOf($target) !== $addTeam) {
+		        array_push($enemy, $target);
 		    }
 		}
+
+		$this->sendNameTag($enemy, $player, '');
 		
 	    return $addTeam->add($player);
 	    
@@ -139,7 +144,7 @@ class TeamManager {
 					&&
 				!empty($this->getTeamOf($sourceplayer))
 					&&
-				$this->getTeamOf($player)->getName() !== $this->getTeamOf($dataplayer)->getName()) {
+				$this->getTeamOf($player) !== $this->getTeamOf($dataplayer)) {
 					if (isset($e->getPacket()->metadata[4])) {
 						$e->getPacket()->metadata[4][1] = '';
 					}
