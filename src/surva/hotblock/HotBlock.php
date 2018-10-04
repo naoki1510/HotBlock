@@ -27,11 +27,11 @@ class HotBlock extends PluginBase {
     private $economy;
     
     /** @var TeamManager */
-    private $teammanager;
+    private $teamManager;
 
     public function onEnable() {
         $this->saveDefaultConfig();
-        $this->teammanager = new TeamManager($this);
+        $this->teamManager = new TeamManager($this);
         $this->getServer()->getPluginManager()->registerEvents(new EventListener($this), $this);
 
         $this->messages = new Config(
@@ -105,7 +105,7 @@ class HotBlock extends PluginBase {
      * @return TeamManager
      */
     public function getTeamManager(): TeamManager {
-        return $this->teammanager;
+        return $this->teamManager;
     }
 
     /**

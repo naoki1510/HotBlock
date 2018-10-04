@@ -10,10 +10,11 @@ namespace surva\hotblock;
 
 use pocketmine\Player;
 use pocketmine\block\Block;
+use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\entity\EntityDamageEvent;
+use pocketmine\event\server\DataPacketSendEvent;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
-use pocketmine\event\Listener;
 
 class EventListener implements Listener {
     /* @var HotBlock */
@@ -46,11 +47,17 @@ class EventListener implements Listener {
         $damaged = $event->getEntity();
         $attacker = $event->getDamager();
         if($this->getTeamManager()->exists($damaged) && $this->getTeamManager()->exists($attacker)){
-            if($this->getTeamManager()->getTeamOf($damaged)->getName() === $this->getTeamManager()->getTeamOf($attacker)){
+            if($this->getTeamManager()->getTeamOf($damaged) === $this->getTeamManager()->getTeamOf($attacker)){
                 $event->setCancelled(true);
             }
         }
     }
+
+    public function onPacketSend(DataPacketSendEvent $e)
+    {
+        $this->getTeamManager()->onDataPacketSend($e);
+    }
+
     /*
     public function onJoin(PlayerJoinEvent $event) {
     	
@@ -59,9 +66,8 @@ class EventListener implements Listener {
     /**
      * @return TeamManager
      */
-    public function getTeamManager() : TeamManager
-    {
-        return $this->teammanager;
+    public function getTeamManager() : TeamManager{
+        return $this->teamManager;
     }
 
     /**

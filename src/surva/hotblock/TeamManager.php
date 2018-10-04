@@ -46,20 +46,22 @@ class TeamManager {
 		//var_dump($minTeams);
 	    $addTeam = $minTeams[rand(0, count($minTeams) - 1)];
 	    $this->players[$player->getName()] = $addTeam;
-	    
+	    /*
 		$enemy = [];
+		*/
 		foreach ($this->players as $playername => $team) {
 			$target = $this->getHotBlock()->getServer()->getPlayer($playername);
 			if (!empty($target) 
 			&& $this->exists($target) 
 			&& $this->getTeamOf($target) !== $addTeam) {
-		        array_push($enemy, $target);
+				$this->sendNameTag($player, $target, '');
+		        
 		    }
 		}
-
-		$this->sendNameTag($enemy, $player, '');
+		//var_dump($enemy);
+		$flag = $addTeam->add($player);
 		
-	    return $addTeam->add($player);
+	    return $flag;
 	    
 	}
 
@@ -96,7 +98,7 @@ class TeamManager {
 
 		$pk = new SetEntityDataPacket();
 		$pk->entityRuntimeId = $sourceplayer->getId();
-		$pk->metadata = $sourceplayer->propertyManager->getAll();
+		//$pk->metadata = $sourceplayer->getDataPropertyManager()->getAll();
 		$pk->metadata[Entity::DATA_NAMETAG] = [Entity::DATA_TYPE_STRING, $nametag];
 
 		// Temporary fix for player custom name tags visible
@@ -114,6 +116,7 @@ class TeamManager {
 		$add->pitch = $sourceplayer->pitch;
 		$add->item = $sourceplayer->getInventory()->getItemInHand();
 		$add->metadata = $sourceplayer->getDataPropertyManager()->getAll();
+		$add->metadata[Entity::DATA_NAMETAG] = [Entity::DATA_TYPE_STRING, $nametag];
 		
 
 		foreach($targetplayer as $p){
@@ -131,12 +134,13 @@ class TeamManager {
 
 	public function onDataPacketSend(DataPacketSendEvent $e)
 	{
-		//$this->getLogger()->info($e->getPacket()->getName() . ' was Sended to ' . $e->getPlayer()->getName() . '.');
+		$this->gethotBlock()->getLogger()->info($e->getPacket()->getName() . ' was Sended to ' . $e->getPlayer()->getName() . '.');
 		if ($e->getPacket()->getName() === 'SetEntityDataPacket' || $e->getPacket()->getName() === 'AddPlayerPacket') {
 			//var_dump($e->getPacket());
 			$targetplayer = $e->getPlayer();
-			if (isset($e->getPacket()->metadata[4])){
-				$sourceplayer = $this->getHotBlock()->getServer()->getPlayer($e->getPacket()->metadata[4]);
+			if (isset($e->getPacket()->metadata[4][1]) && isset($e->getPacket()->entityRuntimeId)){
+				$sourceplayer = $this->getHotBlock()->getServer()->findEntity($e->getPacket()->entityRuntimeId);
+				
 				if(
 				!empty($sourceplayer)
 					&&
@@ -144,16 +148,17 @@ class TeamManager {
 					&&
 				!empty($this->getTeamOf($sourceplayer))
 					&&
-				$this->getTeamOf($player) !== $this->getTeamOf($dataplayer)) {
-					if (isset($e->getPacket()->metadata[4])) {
+				$this->getTeamOf($sourceplayer)->getName() !== $this->getTeamOf($targetplayer)->getName()) {
+					
+					if (isset($e->getPacket()->metadata[4][1])) {
 						$e->getPacket()->metadata[4][1] = '';
 					}
 
 					if (isset($e->getPacket()->username)) {
 						$e->getPacket()->username = '';
 					}
-
-					//var_dump($e->getPacket()->metadata);
+					
+					//var_dump($e->getPacket());
 					//$player->sendDataPacket($e->getPacket());
 				}
 			

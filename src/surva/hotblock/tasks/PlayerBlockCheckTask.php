@@ -19,6 +19,9 @@ class PlayerBlockCheckTask extends Task {
     /* @var HotBlock */
     private $hotBlock;
 
+    /** @var TeamManager */
+    private $teamManager;
+
     public function __construct(HotBlock $hotBlock) {
         $this->hotBlock = $hotBlock;
     }
@@ -51,6 +54,13 @@ class PlayerBlockCheckTask extends Task {
                     break;
             }
         }
+    }
+
+    /**
+     * @return TeamManager
+     */
+    public function getTeamManager() : TeamManager{
+        return $this->teamManager;
     }
 
     /**

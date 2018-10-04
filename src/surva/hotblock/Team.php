@@ -8,6 +8,9 @@ use pocketmine\Player;
 class Team {
 	/** @var HotBlock */
 	private $hotBlock;
+
+	/** @var TeamManager */
+	private $teamManager;
 	
 	/** @var String */
 	public $name;
@@ -73,7 +76,15 @@ class Team {
 		return count($this->players);
 	}
 	
-	/**
+
+    /**
+     * @return TeamManager
+     */
+    public function getTeamManager() : TeamManager{
+        return $this->teamManager;
+    }
+
+    /**
      * @return HotBlock
      */
     public function getHotBlock(): HotBlock {

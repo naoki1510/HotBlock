@@ -17,6 +17,9 @@ class PlayerCoinGiveTask extends Task {
     /* @var HotBlock */
     private $hotBlock;
 
+    /** @var TeamManager */
+    private $teamManager;
+
     public function __construct(HotBlock $hotBlock) {
         $this->hotBlock = $hotBlock;
     }
@@ -81,6 +84,13 @@ class PlayerCoinGiveTask extends Task {
                 $this->getHotBlock()->getEconomy()->addMoney($onlyPlayer, 1, false, "HotBlock");
             }
         }
+    }
+
+    /**
+     * @return TeamManager
+     */
+    public function getTeamManager() : TeamManager{
+        return $this->teamManager;
     }
 
     /**
