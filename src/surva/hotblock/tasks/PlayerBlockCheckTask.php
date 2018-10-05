@@ -41,7 +41,7 @@ class PlayerBlockCheckTask extends Task {
                 switch ($blockUnderPlayer->getId()) {
                     case Item::fromString($this->getHotBlock()->getConfig()->get('safeblock', 'stained_glass'))->getId():
                         if($this->getTeamManager()->exists($playerInLevel)
-                        && $block->getDamage() === $this->getTeamManager()->getTeamOf($playerInLevel)->getColor['block']){
+                        && $blockUnderPlayer->getDamage() === $this->getTeamManager()->getTeamOf($playerInLevel)->getColor['block']){
                             $playerInLevel->sendTip($this->getHotBlock()->getMessage("ground.safe"));
                             
                         }
