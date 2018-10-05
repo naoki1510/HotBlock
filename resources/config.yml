@@ -8,10 +8,10 @@
 
 # Language of the plugin messages
 # Possible options are: en (English), de (German), fr (French), tr (Turkish)
-language: "en"
+language: "ja"
 
 # Name of the world where the game is in
-world: 
+worlds: 
 - pvp
 
 # Options of block
@@ -23,7 +23,7 @@ safeblock: 'stained_glass'
 gameduration: 180
 
 # How many players must be online that the block is active (prevent that one player is getting coins alone)
-players: 3
+minplayers: 1
 
 # The interval in which should be checked on which block the players are standing (and send messages, give effects, etc.) (in seconds)
 checkspeed: 0.25
@@ -32,6 +32,8 @@ checkspeed: 0.25
 coinspeed: 1
 # The point the team can get every $checkspeed seconds
 point: 1
+
+interval: 20
 
 # Only give coins when a player is alone on the HotBlock
 onlyplayer: false

@@ -8,39 +8,61 @@
 
 namespace surva\hotblock;
 
-use pocketmine\Player;
-use pocketmine\utils\Config;
-use pocketmine\command\Command;
-use pocketmine\plugin\PluginBase;
+use naoki1510\Commands\pvpCommand;
+use naoki1510\Game\GameManager;
+use naoki1510\Game\GameTask;
+use naoki1510\Team\TeamManager;
 use onebone\economyapi\EconomyAPI;
+use pocketmine\Player;
+use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use surva\hotblock\tasks\PlayerCoinGiveTask;
-use surva\hotblock\tasks\PlayerBlockCheckTask;
-use raklib\protocol\Packet;
 use pocketmine\event\server\DataPacketSendEvent;
+use pocketmine\level\Level;
+use pocketmine\plugin\PluginBase;
+use pocketmine\utils\Config;
+use raklib\protocol\Packet;
 use surva\hotblock\tasks\GameResetTask;
+use surva\hotblock\tasks\PlayerBlockCheckTask;
+use surva\hotblock\tasks\PlayerCoinGiveTask;
 
 class HotBlock extends PluginBase {
+    /** @var HotBlock */
+    private static $instance;
+
+    /**
+     * @return HotBlock
+     */
+    public static function getInstance() : HotBlock
+    {
+        return self::$instance;
+    }
+
     /** @var Config */
     private $messages;
 
     /** @var EconomyAPI */
     private $economy;
-    
+
     /** @var TeamManager */
     private $teamManager;
 
+    /** @var GameManager */
+    private $gameManager;
+
     public function onEnable() {
+        self::$instance = $this;
+        
+        $this->gameManager = new GameManager($this);
         $this->teamManager = new TeamManager($this);
+        $this->economy = $this->getServer()->getPluginManager()->getPlugin("EconomyAPI");
         $this->saveDefaultConfig();
-        $this->getServer()->getPluginManager()->registerEvents(new EventListener($this), $this);
 
         $this->messages = new Config(
             $this->getFile() . "resources/languages/" . $this->getConfig()->get("language", "en") . ".yml"
         );
 
-        $this->economy = $this->getServer()->getPluginManager()->getPlugin("EconomyAPI");
-        
+        $this->getServer()->getPluginManager()->registerEvents($this->teamManager, $this);
+        $this->getServer()->getCommandMap()->register('hotblock', new pvpCommand('pvp'));
 
         $this->getScheduler()->scheduleRepeatingTask(
             new PlayerBlockCheckTask($this),
@@ -49,10 +71,6 @@ class HotBlock extends PluginBase {
         $this->getScheduler()->scheduleRepeatingTask(
             new PlayerCoinGiveTask($this),
             $this->getConfig()->get("coinspeed", 0.25) * 20
-        );
-        $this->getScheduler()->scheduleRepeatingTask(
-            new GameResetTask($this),
-            $this->getConfig()->get("gameduration", 0.25) * 20
         );
     }
 
@@ -70,34 +88,21 @@ class HotBlock extends PluginBase {
                     $rawMessage = str_replace("{" . $replace . "}", $value, $rawMessage);
                 }
             }
-
             return $rawMessage;
         }
-
         return $key;
     }
-    
-    public function onCommand(CommandSender $sender, Command $command, string $label, array $args) : bool {
-    	switch ($command->getName()) {
-    		case 'pvp': 
-    			if ($sender instanceof Player) {
-                    if(empty($this->getTeamManager()->getTeamOf($sender))){
-                        $this->getTeamManager()->join($sender);
-                    }else{
-                        $this->getTeamManager()->leave($sender);
-                    }
-    				
-    			}else {
-    				$sender->sendMessage('you can use this in game');
-    			}
-    			return true;
-    		break;
-    	}
-    	return false;
-    }
 
-    public function onPacketSend(DataPacketSendEvent $event){
-        $this->getTeamManager()->onDataPacketSend($event);
+    public static function Translate(string $key, array $replaces = array()): string {
+        if($rawMessage = HotBlock::getInstance()->getMessages()->getNested($key)) {
+            if(is_array($replaces)) {
+                foreach($replaces as $replace => $value) {
+                    $rawMessage = str_replace("{" . $replace . "}", $value, $rawMessage);
+                }
+            }
+            return $rawMessage;
+        }
+        return $key;
     }
 
     /**
@@ -113,10 +118,17 @@ class HotBlock extends PluginBase {
         return $this->teamManager;
     }
 
+    public function getGameManager() : GameManager {
+        return $this->gameManager;
+    }
     /**
      * @return Config
      */
     public function getMessages(): Config {
         return $this->messages;
+    }
+    public function getGameLevel() : Level
+    {
+        return $this->getGameManager()->getGameLevel();
     }
 }

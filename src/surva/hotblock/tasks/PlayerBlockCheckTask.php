@@ -17,7 +17,7 @@ use surva\hotblock\TeamManager;
 use pocketmine\entity\EffectInstance;
 
 class PlayerBlockCheckTask extends Task {
-    /* @var HotBlock */
+    /** @var HotBlock */
     private $hotBlock;
 
     /** @var TeamManager */
@@ -29,36 +29,17 @@ class PlayerBlockCheckTask extends Task {
     }
 
     public function onRun(int $currentTick) {
-        //ワールドがないとき
-        foreach ($this->getHotBlock()->getConfig()->get("world", ['pvp']) as $levelName) {
-            if (!($gameLevel = $this->getHotBlock()->getServer()->getLevelByName($levelName))) {
-                return;
-            }
-
-            foreach ($gameLevel->getPlayers() as $playerInLevel) {
-                $blockUnderPlayer = $gameLevel->getBlock($playerInLevel->subtract(0, 0.5));
-
-                switch ($blockUnderPlayer->getId()) {
-                    case Item::fromString($this->getHotBlock()->getConfig()->get('safeblock', 'stained_glass'))->getId():
-                        if($this->getTeamManager()->exists($playerInLevel)
-                        && $blockUnderPlayer->getDamage() === $this->getTeamManager()->getTeamOf($playerInLevel)->getColor()['block']){
-                            $playerInLevel->sendTip($this->getHotBlock()->getMessage("ground.safe"));
-                            
-                        }
-                        break;
-                        /*  
-                    case Item::fromString($this->getHotBlock()->getConfig()->get('normalblock', 'END_STONE'))->getId():
-                        $playerInLevel->sendTip($this->getHotBlock()->getMessage("ground.run"));
-                        break;
-                    case Item::fromString($this->getHotBlock()->getConfig()->get('poisonblock', ' NETHERRACK'))->getId():
-                        $playerInLevel->sendTip($this->getHotBlock()->getMessage("ground.poisoned"));
-
-                        $effect = Effect::getEffectByName($this->getHotBlock()->getConfig()->get("effecttype", "POISON"));
-                        $duration = $this->getHotBlock()->getConfig()->get("effectduration", 3) * 20;
-
-                        $playerInLevel->addEffect(new EffectInstance($effect, $duration));
-                        break;*/
-                }
+        $gameLevel = $this->getHotBlock()->getGameLevel();
+        foreach ($gameLevel->getPlayers() as $playerInLevel) {
+            $blockUnderPlayer = $gameLevel->getBlock($playerInLevel->subtract(0, 0.8));
+            switch ($blockUnderPlayer->getId()) {
+                case Item::fromString($this->getHotBlock()->getConfig()->get('safeblock', 'stained_glass'))->getId():
+                    if($this->getTeamManager()->exists($playerInLevel)
+                    && $blockUnderPlayer->getDamage() === $this->getTeamManager()->getTeamOf($playerInLevel)->getColor()['block']){
+                        $playerInLevel->sendTip($this->getHotBlock()->getMessage("ground.safe"));
+                        
+                    }
+                    break;
             }
         }
     }

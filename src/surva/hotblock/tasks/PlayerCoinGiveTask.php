@@ -13,7 +13,7 @@ use pocketmine\item\Item;
 use pocketmine\block\Block;
 use surva\hotblock\HotBlock;
 use pocketmine\scheduler\Task;
-use surva\hotblock\TeamManager;
+use naoki1510\Team\TeamManager;
 
 class PlayerCoinGiveTask extends Task {
     /* @var HotBlock */
@@ -28,77 +28,67 @@ class PlayerCoinGiveTask extends Task {
     }
 
     public function onRun(int $currentTick) {
-        foreach ($this->getHotBlock()->getConfig()->get("world", ['pvp']) as $levelname) {
-            if (!($gameLevel = $this->getHotBlock()->getServer()->getLevelByName($levelname))) {
-                return;
-            }
+        $gameLevel = $this->getHotBlock()->getGameLevel();
 
-            $playersOnBlock = [];
-            $teamsOnBlock = 0;
+        $playersOnBlock = [];
+        $teamsOnBlock = 0;
 
-            foreach ($gameLevel->getPlayers() as $playerInLevel) {
-                $blockUnderPlayer = $gameLevel->getBlock($playerInLevel->subtract(0, 0.5));
+        foreach ($gameLevel->getPlayers() as $playerInLevel) {
+            $blockUnderPlayer = $gameLevel->getBlock($playerInLevel->subtract(0, 0.8));
+            $areaBlock = Item::fromString($this->getHotBlock()->getConfig()->get('areablock', Block::WOOL));
 
-                if ($blockUnderPlayer->getId() === Item::fromString($this->getHotBlock()->getConfig()->get('areablock', Block::WOOL))->getId()) {
-                    if (count($gameLevel->getPlayers()) < $this->getHotBlock()->getConfig()->get("players", 2)) {
-                        $playerInLevel->sendTip(
-                            $this->getHotBlock()->getMessage(
-                                "block.lessplayers",
-                                array("count" => $this->getHotBlock()->getConfig()->get("players", 2))
-                            )
-                        );
-                        return;
-                    } else {
-                        if ($this->getTeamManager()->exists($playerInLevel)) {
-                            $playersOnBlock += [$playerInLevel];
-                            $playerTeam = $this->getTeamManager()->getTeamOf($playerInLevel);
-                            $teamsOnBlock++;
-                            if ($teamsOnBlock === 1) {
-                                $onlyTeam = $playerTeam;
-                            }
+            if ($blockUnderPlayer->getId() === $areaBlock->getId()) {
+                if (count($gameLevel->getPlayers()) < $this->getHotBlock()->getConfig()->get("minplayers", 2)) {
+                    $playerInLevel->sendTip(
+                        $this->getHotBlock()->getMessage(
+                            "block.lessplayers",
+                            array("count" => $this->getHotBlock()->getConfig()->get("players", 2))
+                        )
+                    );
+                    return;
+                } else {
+                    if ($this->getTeamManager()->exists($playerInLevel)) {
+                        $playersOnBlock += [$playerInLevel];
+                        $playerTeam = $this->getTeamManager()->getTeamOf($playerInLevel);
+                        $teamsOnBlock++;
+                        if ($teamsOnBlock === 1) {
+                            $onlyTeam = $playerTeam;
                         }
                     }
                 }
             }
-            /** @var Team $onlyteam */
-            if ($teamsOnBlock === 1) {
-                $onlyTeam->addPoint($this->getHotBlock()->getConfig()->get('point', 1));
-                foreach ($onlyTeam->getAllPlayers() as $player) {
-                //$player->sendTip($this->getHotBlock()->getMessage("block.move"));
-                    /** @var Player $player*/
-                    /*$player->sendTip("§f\n§f\n".
-                        $this->getHotBlock()->getMessage(
-                            "block.coins",
-                            array("count" => $this->getHotBlock()->getEconomy()->myMoney($player))
-                        )
-                    );*/
-                }
+        }
 
-                foreach ($playersOnBlock as $player) {
-                    if($onlyTeam->exists($player)){
-                        $this->getHotBlock()->getEconomy()->addMoney($player, 10, false, "HotBlock");
-                    }
-                }
-            }
-                // Make a message with points
-            $message = '';
-            foreach ($this->getTeamManager()->getAllTeam() as $team) {
-                $message .= '§l§' . $team->getColor()['text'] . $team->getName() . ' Team§f:§' . $team->getColor()['text'] . $team->getPoint() . '§f,';
+        if ($teamsOnBlock === 1) {
+            $onlyTeam->addPoint($this->getHotBlock()->getConfig()->get('point', 1));
+            foreach ($onlyTeam->getAllPlayers() as $player) {
             }
 
-            $message = trim($message, ",") . "\n§f\n§f";
-            foreach ($gameLevel->getPlayers() as $player) {
-                $player->sendPopup($message);
-                $count = $this->getHotBlock()->getConfig()->get('gameduration', 180) - ($currentTick / 20) % $this->getHotBlock()->getConfig()->get('gameduration', 180);
-                $player->setXpLevel($count);
-                $player->setXpProgress($count / $this->getHotBlock()->getConfig()->get('gameduration', 180));
-                if($count < 6 && $this->getTeamManager()->exists($player)) {
-                    $player->addTitle('§6' . $count, '', 2, 16, 2);
+            foreach ($playersOnBlock as $player) {
+                if($onlyTeam->exists($player)){
+                    $this->getHotBlock()->getEconomy()->addMoney($player, 10, false, "HotBlock");
                 }
-
-                //$player->addActionBarMessage("メッセージ");
             }
         }
+            // Make a message with points
+        $message = '';
+        foreach (TeamManager::getInstance()->getAllTeam() as $team) {
+            $message .= '§l§' . $team->getColor()['text'] . $team->getName() . ' Team§f:§' . $team->getColor()['text'] . $team->getPoint() . '§f,';
+        }
+
+        $message = trim($message, ",") . "\n§f\n§f";
+        foreach ($gameLevel->getPlayers() as $player) {
+            $player->sendPopup($message);
+            $count = $this->getHotBlock()->getConfig()->get('gameduration', 180) - ($currentTick / 20) % $this->getHotBlock()->getConfig()->get('gameduration', 180);
+            $player->setXpLevel($count);
+            $player->setXpProgress($count / $this->getHotBlock()->getConfig()->get('gameduration', 180));
+            if($count < 6 && $this->getTeamManager()->exists($player)) {
+                $player->addTitle('§6' . $count, '', 2, 16, 2);
+            }
+
+            //$player->addActionBarMessage("メッセージ");
+        }
+            
     }
 
     /**
