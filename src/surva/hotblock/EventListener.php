@@ -37,7 +37,9 @@ class EventListener implements Listener {
         $world = $entity->getLevel();
         $block = $world->getBlock($entity->floor()->subtract(0, 1));
 
-        if(in_array($world->getName(), $this->getHotBlock()->getConfig()->get("world", ['pvp']))) {
+        if($entity instanceof Player
+        && in_array($world->getName(), $this->getHotBlock()->getConfig()->get("world", ['pvp']))
+        && $block->getDamage() === $this->getTeamManager()->getTeamOf($entity)->getColor['block']) {
             if($block->getId() === Block::PLANKS) {
                 $event->setCancelled();
             }

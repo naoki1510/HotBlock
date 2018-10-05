@@ -92,7 +92,7 @@ class PlayerCoinGiveTask extends Task {
                 $count = $this->getHotBlock()->getConfig()->get('gameduration', 180) - ($currentTick / 20) % $this->getHotBlock()->getConfig()->get('gameduration', 180);
                 $player->setXpLevel($count);
                 $player->setXpProgress($count / $this->getHotBlock()->getConfig()->get('gameduration', 180));
-                if($count < 6){
+                if($count < 6 && $this->getTeamManager()->exists($player)) {
                     $player->addTitle('§6' . $count, '', 2, 16, 2);
                 }
 
