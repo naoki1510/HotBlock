@@ -66,12 +66,12 @@ class PlayerCoinGiveTask extends Task {
                 foreach ($onlyTeam->getAllPlayers() as $player) {
                 //$player->sendTip($this->getHotBlock()->getMessage("block.move"));
                     /** @var Player $player*/
-                    $player->sendTip("§f\n§f\n".
+                    /*$player->sendTip("§f\n§f\n".
                         $this->getHotBlock()->getMessage(
                             "block.coins",
                             array("count" => $this->getHotBlock()->getEconomy()->myMoney($player))
                         )
-                    );
+                    );*/
                 }
 
                 foreach ($playersOnBlock as $player) {
