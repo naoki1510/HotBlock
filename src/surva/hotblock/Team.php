@@ -3,6 +3,8 @@
 namespace surva\hotblock;
 
 use pocketmine\Player;
+use pocketmine\Server;
+use pocketmine\level\Position;
 // use pocketmine\entity\Entity;
 
 class Team {
@@ -24,7 +26,10 @@ class Team {
 	/** @var Player[] */
 	private $players;
 	
-	public function __construct(HotBlock $hotBlock, String $name, Array $color) {
+	/** @var Position */
+	public $spawn;
+	
+	public function __construct(HotBlock $hotBlock, String $name, Array $color, Vector3 $pos = null) {
 		$this->hotBlock = $hotBlock;
 		//$this->teamManager = $hotBlock->getTeamManager();
 		$this->name = $name;
@@ -32,6 +37,7 @@ class Team {
 		$this->color['block'] = $color['block'] ?? '0';
 		$this->players = [];
 		$this->points = 0;
+		$this->spawn = $pos ? ($pos instanceof Position ? $pos : Position::fromObject($pos, Server::getInstance()->getDefaultLevel())) : null;
 	}
 	
 	public function add(Player $player) : bool {
@@ -40,6 +46,7 @@ class Team {
 			$player->setNameTag('§' . $this->color['text'] . $player->getName());
 			$player->sendMessage('You are now belonging to §' . $this->color['text'] . $this->getName() . '§f team.');
 			$player->setAllowMovementCheats(true);
+			$player->setSpawn($this->spawn ?? Server::getInstance()->getDefaultLevel()->getSpawnLocation());
 			return true;
 		}
 		return false;
@@ -69,6 +76,14 @@ class Team {
 
 	public function setPoint(int $point){
 		$this->points = $point;
+	}
+	
+	public function setSpawn(Vector3 $pos) {
+	    $this->spawn = $pos instanceof Position ? $pos : Position::fromObject($pos, $this->getServer()->getDefaultLevel());
+	}
+	
+	public function getSpawn() : Position{
+	    return $this->spawn;
 	}
 
 	public function init()

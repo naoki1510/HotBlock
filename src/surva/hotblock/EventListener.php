@@ -41,7 +41,7 @@ class EventListener implements Listener {
         && in_array($world->getName(), $this->getHotBlock()->getConfig()->get("world", ['pvp']))
         && $this->getTeamManager()->exists($entity)
         && $block->getDamage() === $this->getTeamManager()->getTeamOf($entity)->getColor()['block']
-        && $block->getId() === Block::PLANKS) {
+        && $block->getId() === Item::fromString($this->getHotBlock()->getConfig()->get('safeblock', 'stained_glass'))->getId()) {
             $event->setCancelled();
         }
     }
