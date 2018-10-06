@@ -4,12 +4,12 @@ namespace naoki1510\Tasks;
 
 
 use naoki1510\Game\GameManager;
+use naoki1510\Game\TeamManager;
 use pocketmine\block\Block;
 use pocketmine\entity\EffectInstance;
 use pocketmine\item\Item;
 use pocketmine\scheduler\Task;
 use surva\hotblock\HotBlock;
-use surva\hotblock\TeamManager;
 
 
 class GameTask extends Task{
@@ -38,7 +38,7 @@ class GameTask extends Task{
                     if (count($gameLevel->getPlayers()) < HotBlock::getinstance()->getConfig()->get("players", 2)) {
                         //GameManager::getInctance()->getConfig()->get('point', 1)
                         $player->sendTip(
-                            $this->getHotBlock()->getMessage(
+                            HotBlock::Translate(
                                 "block.lessplayers",
                                 array("count" => HotBlock::getinstance()->getConfig()->get("players", 2))
                             )
