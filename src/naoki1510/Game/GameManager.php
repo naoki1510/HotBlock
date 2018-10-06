@@ -96,6 +96,9 @@ class GameManager
                     Item::get(Item::FIREWORKS, 8, 64),
                     Item::get(Item::FIREWORKS, 9, 64),
                 ];
+                foreach ($items as $item) {
+                    $player->getInventory()->addItem($item);
+                }
             }
         }
     }
