@@ -49,7 +49,7 @@ class GameManager
         $level = Server::getInstance()->getLevelByName($levelnames[array_rand($levelnames)]);
         $this->gameLevel = $level;
 
-        $hotBlock->getScheduler()->scheduleRepeatingTask(new GameTask($this->getHotBlock()), 20);
+        $hotBlock->getScheduler()->scheduleRepeatingTask(new GameTask($hotBlock), 20);
         $hotBlock->getScheduler()->scheduleRepeatingTask(new SendMessageTask($hotBlock), 20);
 
 
