@@ -33,8 +33,8 @@ class GameTask extends Task{
         foreach ($gameLevel->getPlayers() as $player) {
             $blockUnderPlayer = $gameLevel->getBlock($player->subtract(0, 0.5));
 
-            if($blockUnderPlayer->getId() === Item::fromString(HotBloc::getinstance()->getConfig()->get('areablock', Block::WOOL))->getId(){
-                    if (count($gameLevel->getPlayers()) < $this->getHotBlock()->getConfig()->get("players", 2)) {
+            if($blockUnderPlayer->getId() === Item::fromString(HotBloc::getinstance()->getConfig()->get('areablock', Block::WOOL))->getId()){
+                    if (count($gameLevel->getPlayers()) < $this->getHotBlock()->getConfig()->get("players", 2)) {GameManager::getInctance()->getConfig()->get('point', 1)
                         $player->sendTip(
                             $this->getHotBlock()->getMessage(
                                 "block.lessplayers",
