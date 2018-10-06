@@ -65,7 +65,7 @@ class GameTask extends Task{
             
         }
         
-        if ($curentTick % 20 == 0) {
+        if ($currentTick % 20 == 0) {
             GameManager::getInstance()->addCount(1);
         }
     }
