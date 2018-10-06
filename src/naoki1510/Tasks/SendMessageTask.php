@@ -36,7 +36,7 @@ class SendMessageTask extends Task
             $player->sendPopup($message);
             $countdown = GameManager::getInstance()->getGameConfig()->get('gameduration', 180) - ($currentTick / 20) % (GameManager::getInstance()->getGameConfig()->get('gameduration', 180) + GameManager::getInstance()->getGameConfig()->get('interval', 30));
             $player->setXpLevel($countdown);
-            $player->setXpProgress($countdown / $this->getHotBlock()->getConfig()->get('gameduration', 180));
+            $player->setXpProgress($countdown / GameManager::getInstance()->getGameConfig()->get('gameduration', 180));
 
             if ($countdown < 6 && TeamManager::getInstance()->exists($player)) {
                 $player->addTitle('§6' . $countdown, '', 2, 16, 2);
