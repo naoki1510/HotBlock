@@ -109,6 +109,14 @@ class GameManager
     public function isRunning(){
         return $this->running;
     }
+    
+    public function addCount(Int $cont = 1){
+        $this->gameCount += $count;
+    }
+    
+    public function getCount() {
+        return $this->gameCount;
+    }
 
 
     public function getGameLevel() : Level

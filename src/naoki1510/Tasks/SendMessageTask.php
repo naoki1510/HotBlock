@@ -37,7 +37,7 @@ class SendMessageTask extends Task
             $gameduration = GameManager::getInstance()->getGameConfig()->get('gameduration', 180);
             //$interval = GameManager::getInstance()->getGameConfig()->get('interval', 30)
             //$countdown = $gameduration - ($currentTick / 20) % ($gameduration + $interval);
-            $countdown = GameManager::getInstance()->getGameCount();
+            $countdown = GameManager::getInstance()->getCount();
             $player->setXpLevel($countdown);
             $player->setXpProgress($countdown / ($duration));
 
