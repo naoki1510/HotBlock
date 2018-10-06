@@ -33,19 +33,20 @@ class GameTask extends Task{
         foreach ($gameLevel->getPlayers() as $player) {
             $blockUnderPlayer = $gameLevel->getBlock($player->subtract(0, 0.5));
 
-            if($blockUnderPlayer->getId() === Item::fromString(HotBloc::getinstance()->getConfig()->get('areablock', Block::WOOL))->getId()){
-                    if (count($gameLevel->getPlayers()) < $this->getHotBlock()->getConfig()->get("players", 2)) {GameManager::getInctance()->getConfig()->get('point', 1)
+            if($blockUnderPlayer->getId() === Item::fromString(HotBlock::getinstance()->getConfig()->get('areablock', Block::WOOL))->getId()){
+                    if (count($gameLevel->getPlayers()) < HotBlock::getinstance()->getConfig()->get("players", 2)) {
+                        //GameManager::getInctance()->getConfig()->get('point', 1)
                         $player->sendTip(
                             $this->getHotBlock()->getMessage(
                                 "block.lessplayers",
-                                array("count" => $this->getHotBlock()->getConfig()->get("players", 2))
+                                array("count" => HotBlock::getinstance()->getConfig()->get("players", 2))
                             )
                         );
                         return;
                     } else {
-                        if ($this->getTeamManager()->exists($player)) {
+                        if (TeamManager::getInstance()->exists($player)) {
                             //$playersOnBlock += [$player];
-                            $playerTeam = $this->getTeamManager()->getTeamOf($player);
+                            $playerTeam = TeamManager::getInstance()->getTeamOf($player);
                             $teamsOnBlock++;
                             if ($teamsOnBlock === 1) {
                                 $onlyTeam = $playerTeam;
