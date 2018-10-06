@@ -33,6 +33,9 @@ class GameManager
 
     /** @var Level */
     public $gameLevel;
+    
+    /** @var Int */
+    public $gameCount;
 
 
     public function __construct(HotBlock $hotBlock)
@@ -46,7 +49,7 @@ class GameManager
         $level = Server::getInstance()->getLevelByName($levelnames[array_rand($levelnames)]);
         $this->gameLevel = $level;
 
-        //$this->getHotBlock()->getScheduler()->scheduleRepeatingTask(new GameTask($this->getHotBlock()), 20);
+        $this->getHotBlock()->getScheduler()->scheduleRepeatingTask(new GameTask($this->getHotBlock()), 20);
         $hotBlock->getScheduler()->scheduleRepeatingTask(new SendMessageTask($hotBlock), 20);
 
 

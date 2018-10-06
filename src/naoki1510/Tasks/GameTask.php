@@ -13,13 +13,13 @@ use surva\hotblock\TeamManager;
 
 class GameTask extends Task{
     /** @var HotBlock */
-    private $hotBlock;
+    //private $hotBlock;
 
     /** @var TeamManager */
-    private $teamManager;
+    //private $teamManager;
 
     public function __construct(HotBlock $hotBlock) {
-        $this->hotBlock = $hotBlock;
+        //$this->hotBlock = $hotBlock;
         //$this->teamManager = $hotBlock->getTeamManager();
         //$this->config = 
     }
@@ -27,21 +27,13 @@ class GameTask extends Task{
     public function onRun(int $currentTick) {
         $gameLevel = $this->getHotBlock()->getGameLevel();
 
-        $playersOnBlock = [];
+        //$playersOnBlock = [];
         $teamsOnBlock = 0;
 
         foreach ($gameLevel->getPlayers() as $player) {
             $blockUnderPlayer = $gameLevel->getBlock($player->subtract(0, 0.5));
 
-            switch ($blockUnderPlayer->getId()) {
-                case Item::fromString($this->getHotBlock()->getConfig()->get('safeblock', 'stained_glass'))->getId():
-                    if($this->getTeamManager()->exists($player)
-                    && $blockUnderPlayer->getDamage() === $this->getTeamManager()->getTeamOf($player)->getColor()['block']){
-                        $player->sendTip($this->getHotBlock()->getMessage("ground.safe"));
-                    }
-                    break;
-
-                case Item::fromString($this->getHotBlock()->getConfig()->get('areablock', Block::WOOL))->getId():
+            if($blockUnderPlayer->getId() === Item::fromString(HotBloc::getinstance()->getConfig()->get('areablock', Block::WOOL))->getId(){
                     if (count($gameLevel->getPlayers()) < $this->getHotBlock()->getConfig()->get("players", 2)) {
                         $player->sendTip(
                             $this->getHotBlock()->getMessage(
@@ -52,7 +44,7 @@ class GameTask extends Task{
                         return;
                     } else {
                         if ($this->getTeamManager()->exists($player)) {
-                            $playersOnBlock += [$player];
+                            //$playersOnBlock += [$player];
                             $playerTeam = $this->getTeamManager()->getTeamOf($player);
                             $teamsOnBlock++;
                             if ($teamsOnBlock === 1) {
@@ -65,49 +57,17 @@ class GameTask extends Task{
         }
 
         if ($teamsOnBlock === 1) {
-            $onlyTeam->addPoint($this->getHotBlock()->getConfig()->get('point', 1));
-
-            foreach ($playersOnBlock as $player) {
-                if ($onlyTeam->exists($player)) {
-                    $this->getHotBlock()->getEconomy()->addMoney($player, 10, false, "HotBlock");
-                }
-            }
+            $point = GameManager::getInctance()->getConfig()->get('point', 1);
+            $period = GameManager::getInctance()->getConfig()->get('gameperiod', 0.2);
+            $onlyTeam->addPoint($point);
+            
         }
-            // Make a message with points
-        $message = '';
-        foreach ($this->getTeamManager()->getAllTeam() as $team) {
-            $message .= '§l§' . $team->getColor()['text'] . $team->getName() . ' Team§f:§' . $team->getColor()['text'] . $team->getPoint() . '§f,';
-        }
-        $message = trim($message, ",");
-        foreach ($gameLevel->getPlayers() as $player) {
-            $player->sendPopup($message);
-            $countdown = $this->getHotBlock()->getConfig()->get('gameduration', 180) - ($currentTick / 20) % ($this->getHotBlock()->getConfig()->get('gameduration', 180) + $this->getHotBlock()->getConfig()->get('interval', 30));
-            $player->setXpLevel($countdown);
-            $player->setXpProgress($countdown / $this->getHotBlock()->getConfig()->get('gameduration', 180));
-
-            if ($countdown < 6 && $this->getTeamManager()->exists($player)) {
-                $player->addTitle('§6' . $countdown, '', 2, 16, 2);
-            }
-
-            if($countdown === $this->getHotBlock()->getConfig()->get('gameduration', 180)){
-                $this->endGame();
-            }
+        
+        if ($curentTick % 20 == 0) {
+            GameManager::getInstance()->
         }
     }
 
-    /**
-     * @return TeamManager
-     */
-    public function getTeamManager() : TeamManager{
-        return $this->teamManager;
-    }
-
-    /**
-     * @return HotBlock
-     */
-    public function getHotBlock(): HotBlock {
-        return $this->hotBlock;
-    }
 
     public function endGame()
     {

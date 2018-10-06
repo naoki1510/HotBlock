@@ -34,9 +34,12 @@ class SendMessageTask extends Task
         
         foreach ($gameLevel->getPlayers() as $player) {
             $player->sendPopup($message);
-            $countdown = GameManager::getInstance()->getGameConfig()->get('gameduration', 180) - ($currentTick / 20) % (GameManager::getInstance()->getGameConfig()->get('gameduration', 180) + GameManager::getInstance()->getGameConfig()->get('interval', 30));
+            $gameduration = GameManager::getInstance()->getGameConfig()->get('gameduration', 180);
+            //$interval = GameManager::getInstance()->getGameConfig()->get('interval', 30)
+            //$countdown = $gameduration - ($currentTick / 20) % ($gameduration + $interval);
+            $countdown = GameManager::getInstance()->getGameCount();
             $player->setXpLevel($countdown);
-            $player->setXpProgress($countdown / GameManager::getInstance()->getGameConfig()->get('gameduration', 180));
+            $player->setXpProgress($countdown / ($duration));
 
             if ($countdown < 6 && TeamManager::getInstance()->exists($player)) {
                 $player->addTitle('§6' . $countdown, '', 2, 16, 2);

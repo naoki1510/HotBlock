@@ -68,11 +68,11 @@ class Team {
 		return isset($this->players[$player->getName()]);
 	}
 
-	public function addPoint(int $point = 1){
+	public function addPoint(Int $point = 1){
 		$this->points += $point;
 	}
 
-	public function getPoint(){
+	public function getPoint() : Int {
 		return $this->points;
 	}
 
