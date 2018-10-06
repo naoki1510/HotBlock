@@ -25,7 +25,7 @@ class GameTask extends Task{
     }
 
     public function onRun(int $currentTick) {
-        $gameLevel = $this->getHotBlock()->getGameLevel();
+        $gameLevel = GameManager::getInstance()->getGameLevel();
 
         //$playersOnBlock = [];
         $teamsOnBlock = 0;
